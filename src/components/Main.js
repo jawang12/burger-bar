@@ -5,7 +5,7 @@ const main = props => {
   return (
     <>
       <nav>Toolbar, Sidedrawer, Backdrop</nav>
-      <main className={classes.Main_Content}>{props.children}</main>
+      <main className={classes.MainContent}>{props.children}</main>
     </>
   );
 };

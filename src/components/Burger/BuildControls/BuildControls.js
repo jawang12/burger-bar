@@ -1,0 +1,48 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import classes from './BuildControls.module.css';
+import BuildControl from './BuildControl/BuildControl';
+
+const controls = [
+  {
+    label: 'Lettuce',
+    type: 'lettuce'
+  },
+  {
+    label: 'Cheese',
+    type: 'cheese'
+  },
+  {
+    label: 'Bacon',
+    type: 'bacon'
+  },
+  {
+    label: 'Patty',
+    type: 'patty'
+  }
+];
+
+const BuildControls = props => {
+  return (
+    <div className={classes.BuildControls}>
+      {controls.map(control => (
+        <BuildControl
+          key={control.type}
+          label={control.label}
+          onRemoveIngredient={() => props.removeIngredient(control.type)}
+          onAddIngredient={() => props.addIngredient(control.type)}
+          disabledStatus={props.disabledStatus[control.type]}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default BuildControls;
+
+BuildControls.propTypes = {
+  removeIngredient: PropTypes.func.isRequired,
+  addIngredient: PropTypes.func.isRequired,
+  disabledStatus: PropTypes.object.isRequired
+};
