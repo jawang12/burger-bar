@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Burger from '../../components/Burger/Burger';
 import BurgerControls from '../../components/Burger/BuildControls/BuildControls';
+import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 
 const PRICES = {
   lettuce: 0.5,
@@ -17,7 +19,17 @@ class BurgerBuilder extends Component {
       cheese: 0,
       patty: 0
     },
-    price: 2.5
+    price: 2.5,
+    orderable: false
+  };
+
+  updateOrderState = () => {
+    this.setState(prevState => {
+      const totalPrice = Object.values(this.state.ingredients).reduce(
+        (sum, currentVal) => sum + currentVal
+      );
+      return { orderable: totalPrice > 0 };
+    });
   };
 
   addIngredientHandler = type => {
@@ -28,10 +40,10 @@ class BurgerBuilder extends Component {
 
       return { price, ingredients: { ...copyOfOldState.ingredients } };
     });
+    this.updateOrderState();
   };
 
   removeIngredientHandler = type => {
-    console.log('fire');
     this.setState(prevState => {
       if (prevState.ingredients[type] < 1) return;
 
@@ -41,6 +53,7 @@ class BurgerBuilder extends Component {
 
       return { price, ingredients: { ...copyOfOldState.ingredients } };
     });
+    this.updateOrderState();
   };
 
   render() {
@@ -51,11 +64,16 @@ class BurgerBuilder extends Component {
     }
     return (
       <>
+        <Modal>
+          <OrderSummary ingredients={this.state.ingredients} />
+        </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BurgerControls
           disabledStatus={btndDisabledStatus}
           removeIngredient={this.removeIngredientHandler}
           addIngredient={this.addIngredientHandler}
+          price={this.state.price}
+          isOrderable={this.state.orderable}
         />
       </>
     );

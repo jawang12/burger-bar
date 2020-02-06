@@ -26,6 +26,9 @@ const controls = [
 const BuildControls = props => {
   return (
     <div className={classes.BuildControls}>
+      <p>
+        Total Price: <strong>{props.price.toFixed(2)}</strong>
+      </p>
       {controls.map(control => (
         <BuildControl
           key={control.type}
@@ -35,6 +38,9 @@ const BuildControls = props => {
           disabledStatus={props.disabledStatus[control.type]}
         />
       ))}
+      <button disabled={!props.isOrderable} className={classes.OrderButton}>
+        Place Order
+      </button>
     </div>
   );
 };
@@ -44,5 +50,7 @@ export default BuildControls;
 BuildControls.propTypes = {
   removeIngredient: PropTypes.func.isRequired,
   addIngredient: PropTypes.func.isRequired,
-  disabledStatus: PropTypes.object.isRequired
+  disabledStatus: PropTypes.object.isRequired,
+  price: PropTypes.number.isRequired,
+  isOrderable: PropTypes.bool.isRequired
 };
