@@ -1,10 +1,13 @@
 import React from 'react';
 import classes from './Main.module.css';
+import Toolbar from './Nav/Toolbar/Toolbar';
+import Sidebar from './Nav/Sidebar/Sidebar';
 
 const main = props => {
   return (
     <>
-      <nav>Toolbar, Sidedrawer, Backdrop</nav>
+      <Toolbar />
+      <Sidebar />
       <main className={classes.MainContent}>{props.children}</main>
     </>
   );
