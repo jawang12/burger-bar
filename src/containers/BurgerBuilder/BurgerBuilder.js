@@ -24,7 +24,7 @@ class BurgerBuilder extends Component {
     isOrdering: false
   };
 
-  updateOrderState = () => {
+  updateOrderableHandler = () => {
     this.setState(prevState => {
       const totalPrice = Object.values(this.state.ingredients).reduce(
         (sum, currentVal) => sum + currentVal
@@ -33,7 +33,15 @@ class BurgerBuilder extends Component {
     });
   };
 
-  toggleOrderingStatus = () => {
+  goToCheckout = () => {
+    alert('Continuing to checkout');
+  };
+
+  cancelOrderHandler = () => {
+    this.setState({ isOrdering: false });
+  };
+
+  isOrderingHandler = () => {
     this.setState({ isOrdering: true });
   };
 
@@ -49,7 +57,7 @@ class BurgerBuilder extends Component {
 
       return { price, ingredients: { ...copyOfOldState.ingredients } };
     });
-    this.updateOrderState();
+    this.updateOrderableHandler();
   };
 
   removeIngredientHandler = type => {
@@ -62,7 +70,7 @@ class BurgerBuilder extends Component {
 
       return { price, ingredients: { ...copyOfOldState.ingredients } };
     });
-    this.updateOrderState();
+    this.updateOrderableHandler();
   };
 
   render() {
@@ -77,7 +85,12 @@ class BurgerBuilder extends Component {
           show={this.state.isOrdering}
           onRemoveBackdrop={this.removeBackdropHandler}
         >
-          <OrderSummary ingredients={this.state.ingredients} />
+          <OrderSummary
+            ingredients={this.state.ingredients}
+            onClickCancel={this.cancelOrderHandler}
+            onClickSuccess={this.goToCheckout}
+            price={this.state.price}
+          />
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BurgerControls
@@ -86,7 +99,7 @@ class BurgerBuilder extends Component {
           addIngredient={this.addIngredientHandler}
           price={this.state.price}
           isOrderable={this.state.orderable}
-          isOrdering={this.toggleOrderingStatus}
+          isOrdering={this.isOrderingHandler}
         />
       </>
     );
