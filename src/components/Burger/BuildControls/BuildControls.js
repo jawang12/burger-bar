@@ -38,7 +38,11 @@ const BuildControls = props => {
           disabledStatus={props.disabledStatus[control.type]}
         />
       ))}
-      <button disabled={!props.isOrderable} className={classes.OrderButton}>
+      <button
+        disabled={!props.isOrderable}
+        className={classes.OrderButton}
+        onClick={props.isOrdering}
+      >
         Place Order
       </button>
     </div>
@@ -52,5 +56,6 @@ BuildControls.propTypes = {
   addIngredient: PropTypes.func.isRequired,
   disabledStatus: PropTypes.object.isRequired,
   price: PropTypes.number.isRequired,
-  isOrderable: PropTypes.bool.isRequired
+  isOrderable: PropTypes.bool.isRequired,
+  isOrdering: PropTypes.func.isRequired
 };

@@ -20,7 +20,8 @@ class BurgerBuilder extends Component {
       patty: 0
     },
     price: 2.5,
-    orderable: false
+    orderable: false,
+    isOrdering: false
   };
 
   updateOrderState = () => {
@@ -30,6 +31,14 @@ class BurgerBuilder extends Component {
       );
       return { orderable: totalPrice > 0 };
     });
+  };
+
+  toggleOrderingStatus = () => {
+    this.setState({ isOrdering: true });
+  };
+
+  removeBackdropHandler = () => {
+    this.setState({ isOrdering: false });
   };
 
   addIngredientHandler = type => {
@@ -64,7 +73,10 @@ class BurgerBuilder extends Component {
     }
     return (
       <>
-        <Modal>
+        <Modal
+          show={this.state.isOrdering}
+          onRemoveBackdrop={this.removeBackdropHandler}
+        >
           <OrderSummary ingredients={this.state.ingredients} />
         </Modal>
         <Burger ingredients={this.state.ingredients} />
@@ -74,6 +86,7 @@ class BurgerBuilder extends Component {
           addIngredient={this.addIngredientHandler}
           price={this.state.price}
           isOrderable={this.state.orderable}
+          isOrdering={this.toggleOrderingStatus}
         />
       </>
     );
