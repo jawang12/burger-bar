@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classes from './Main.module.css';
-import Toolbar from './Nav/Toolbar/Toolbar';
-import Sidebar from './Nav/Sidebar/Sidebar';
+import Toolbar from '../../components/Nav/Toolbar/Toolbar';
+import Sidebar from '../../components/Nav/Sidebar/Sidebar';
 
 class Main extends Component {
   state = {
