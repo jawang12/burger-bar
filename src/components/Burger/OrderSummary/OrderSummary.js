@@ -4,10 +4,6 @@ import PropTypes from 'prop-types';
 import Button from '../../UI/Button/Button';
 
 class OrderSummary extends Component {
-  componentDidUpdate() {
-    console.log('update');
-  }
-
   render() {
     const listOfToppings = Object.keys(this.props.ingredients).map(item => (
       <li key={item} style={{ listStyle: 'none', margin: '5px 0' }}>

@@ -3,6 +3,9 @@ import Burger from '../../components/Burger/Burger';
 import BurgerControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Spinner from '../../components/UI/Spinner/Spinner';
+
+import axios from '../../axios/orders';
 
 const PRICES = {
   lettuce: 0.5,
@@ -21,7 +24,8 @@ class BurgerBuilder extends Component {
     },
     price: 2.5,
     orderable: false,
-    isOrdering: false
+    isOrdering: false,
+    loading: false
   };
 
   updateOrderableHandler = () => {
@@ -34,7 +38,58 @@ class BurgerBuilder extends Component {
   };
 
   goToCheckout = () => {
-    alert('Continuing to checkout');
+    this.setState({ loading: true });
+
+    setTimeout(() => {
+      const order = {
+        ingredients: this.state.ingredients,
+        price: this.state.price,
+        customer: {
+          name: 'James Bond',
+          address: {
+            street: 'Main St',
+            city: 'London',
+            country: 'UK'
+          },
+          email: '007@mi6.com'
+        },
+        priority: 'fastest'
+      };
+      axios
+        .post('/orders.json', order)
+        .then(res => {
+          this.setState({ loading: false, isOrdering: false });
+          console.log('success', res);
+        })
+        .catch(err => {
+          this.setState({ loading: false, isOrdering: false });
+          console.error(err);
+        });
+    }, 3000);
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.price,
+    //   customer: {
+    //     name: 'James Bond',
+    //     address: {
+    //       street: 'Main St',
+    //       city: 'London',
+    //       country: 'UK'
+    //     },
+    //     email: '007@mi6.com'
+    //   },
+    //   priority: 'fastest'
+    // };
+    // axios
+    //   .post('/orders.json', order)
+    //   .then(res => {
+    //     this.setState({ loading: false, isOrdering: false });
+    //     console.log('success', res);
+    //   })
+    //   .catch(err => {
+    //     this.setState({ loading: false, isOrdering: false });
+    //     console.error(err);
+    //   });
   };
 
   cancelOrderHandler = () => {
@@ -85,12 +140,16 @@ class BurgerBuilder extends Component {
           show={this.state.isOrdering}
           onRemoveBackdrop={this.removeBackdropHandler}
         >
-          <OrderSummary
-            ingredients={this.state.ingredients}
-            onClickCancel={this.cancelOrderHandler}
-            onClickSuccess={this.goToCheckout}
-            price={this.state.price}
-          />
+          {this.state.loading ? (
+            <Spinner />
+          ) : (
+            <OrderSummary
+              ingredients={this.state.ingredients}
+              onClickCancel={this.cancelOrderHandler}
+              onClickSuccess={this.goToCheckout}
+              price={this.state.price}
+            />
+          )}
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BurgerControls
