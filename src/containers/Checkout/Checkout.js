@@ -3,17 +3,32 @@ import ReviewOrder from '../../components/ReviewOrder/ReviewOrder';
 
 export default class Checkout extends Component {
   state = {
-    ingredients: {
-      lettuce: 1,
-      meat: 1,
-      cheese: 1,
-      patty: 1
+    ingredients: null
+  };
+
+  componentDidMount() {
+    const queryIterator = new URLSearchParams(this.props.location.search);
+    const ingredients = {};
+    for (let param of queryIterator) {
+      ingredients[param[0]] = param[1];
     }
+    this.setState({ ingredients });
+  }
+
+  cancelCheckoutHandler = () => {
+    this.props.history.goBack();
+  };
+  continueCheckoutHandler = () => {
+    this.props.history.replace('/checkout/order-info');
   };
   render() {
     return (
       <div>
-        <ReviewOrder ingredients={this.state.ingredients} />
+        <ReviewOrder
+          onCancelCheckout={this.cancelCheckoutHandler}
+          onContinueCheckout={this.continueCheckoutHandler}
+          ingredients={this.state.ingredients}
+        />
       </div>
     );
   }
