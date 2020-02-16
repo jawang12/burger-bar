@@ -13,7 +13,7 @@ const ReviewOrder = props => (
       Cancel
     </Button>
     <Button click={props.onContinueCheckout} btnType="Success">
-      Submit
+      Confirm
     </Button>
   </div>
 );

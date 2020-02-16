@@ -49,21 +49,6 @@ class BurgerBuilder extends Component {
   goToCheckout = () => {
     // this.setState({ loading: true });
 
-    // const order = {
-    //   ingredients: this.state.ingredients,
-    //   price: this.state.price,
-    //   customer: {
-    //     name: 'James Bond',
-    //     address: {
-    //       street: 'Main St',
-    //       city: 'London',
-    //       country: 'UK'
-    //     },
-    //     email: '007@mi6.com'
-    //   },
-    //   priority: 'fastest'
-    // };
-
     const queryParams = [];
 
     const { ingredients } = this.state;

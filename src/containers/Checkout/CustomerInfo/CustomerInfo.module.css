@@ -1,0 +1,20 @@
+.CustomerInfo {
+  margin: 20px auto;
+  width: 80%;
+  text-align: center;
+  box-sizing: border-box;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 4px #ccc;
+  padding: 10px;
+}
+
+.CustomerInfo input {
+  display: block;
+  margin: auto;
+}
+
+@media (min-width: 600px) {
+  .CustomerInfo {
+    width: 500px;
+  }
+}
