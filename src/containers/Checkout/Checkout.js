@@ -5,16 +5,20 @@ import CustomerInfo from './CustomerInfo/CustomerInfo';
 
 export default class Checkout extends Component {
   state = {
-    ingredients: null
+    ingredients: {},
+    price: 0
   };
 
   componentDidMount() {
     const queryIterator = new URLSearchParams(this.props.location.search);
     const ingredients = {};
     for (let param of queryIterator) {
-      ingredients[param[0]] = param[1];
+      if (param[0] !== 'price') {
+        ingredients[param[0]] = param[1];
+      }
     }
-    this.setState({ ingredients });
+    const price = +queryIterator.get('price');
+    this.setState({ ingredients, price });
   }
 
   cancelCheckoutHandler = () => {
@@ -33,7 +37,13 @@ export default class Checkout extends Component {
         />
         <Route
           path={this.props.match.url + '/customer-info'}
-          component={CustomerInfo}
+          render={props => (
+            <CustomerInfo
+              {...props}
+              price={this.state.price}
+              ingredients={this.state.ingredients}
+            />
+          )}
         />
       </div>
     );
