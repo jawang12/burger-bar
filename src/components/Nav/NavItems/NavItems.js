@@ -4,8 +4,10 @@ import NavItem from './NavItem/NavItem';
 
 const NavigationItems = () => (
   <ul className={classes.NavItems}>
-    <NavItem link="/">Build Your Burger</NavItem>
-    <NavItem link="/checkout">Checkout</NavItem>
+    <NavItem link="/" exact>
+      Build Your Burger
+    </NavItem>
+    <NavItem link="/orders">Orders</NavItem>
   </ul>
 );
 
