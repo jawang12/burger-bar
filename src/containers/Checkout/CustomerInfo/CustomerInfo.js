@@ -17,6 +17,11 @@ export default class CustomerInfo extends Component {
           placeholder: 'Name',
           name: 'name'
         },
+        validators: {
+          isRequired: true
+        },
+        valid: false,
+        touched: false,
         value: ''
       },
       address: {
@@ -26,6 +31,11 @@ export default class CustomerInfo extends Component {
           name: 'address',
           placeholder: 'Street Address'
         },
+        validators: {
+          isRequired: true
+        },
+        valid: false,
+        touched: false,
         value: ''
       },
       zip: {
@@ -35,6 +45,13 @@ export default class CustomerInfo extends Component {
           type: 'text',
           placeholder: 'Zip Code'
         },
+        validators: {
+          isRequired: true,
+          maxLength: 5,
+          minLength: 5
+        },
+        valid: false,
+        touched: false,
         value: ''
       },
       country: {
@@ -44,6 +61,11 @@ export default class CustomerInfo extends Component {
           name: 'country',
           placeholder: 'Country'
         },
+        validators: {
+          isRequired: true
+        },
+        valid: false,
+        touched: false,
         value: ''
       },
       email: {
@@ -53,6 +75,11 @@ export default class CustomerInfo extends Component {
           name: 'email',
           placeholder: 'Email'
         },
+        validators: {
+          isRequired: true
+        },
+        valid: false,
+        touched: false,
         value: ''
       },
       deliveryMethod: {
@@ -63,34 +90,31 @@ export default class CustomerInfo extends Component {
             { value: 'rush', displayValue: 'Rush' }
           ]
         },
-        value: ''
+        validators: {},
+        valid: true,
+        touched: true,
+        value: 'normal'
       }
     }
   };
 
   submitOrderHandler = e => {
-    this.setState({ loading: true });
     e.preventDefault();
+    this.setState({ loading: true });
 
-    const customer = {
-      customer: {
-        name: 'James Bond',
-        address: {
-          street: 'Main St',
-          city: 'London',
-          country: 'UK'
-        },
-        email: '007@mi6.com'
+    const customerInfo = Object.keys(this.state.orderForm).reduce(
+      (obj, inputName) => {
+        obj[inputName] = this.state.orderForm[inputName].value;
+        return obj;
       },
-      priority: 'fastest'
-    };
+      {}
+    );
 
     const fullOrder = {
-      ...customer,
+      customerInfo,
       ingredients: this.props.ingredients,
       price: this.props.price
     };
-    console.log(fullOrder);
 
     axios
       .post('/orders.json', fullOrder)
@@ -106,13 +130,32 @@ export default class CustomerInfo extends Component {
   };
 
   inputChangeHandler = (e, name) => {
-    // this.setState({ orderForm: { [name]: { value: e.target.value } } });
     const updatedOrderForm = { ...this.state.orderForm };
     const updatedFormElement = { ...updatedOrderForm[name] };
 
     updatedFormElement.value = e.target.value;
+    updatedFormElement.touched = true;
+    updatedFormElement.valid = this.validator(
+      updatedFormElement.validators,
+      e.target.value
+    );
     updatedOrderForm[name] = updatedFormElement;
     this.setState({ orderForm: updatedOrderForm });
+  };
+
+  validator = (validators, value) => {
+    let isValid = true;
+
+    if (validators.isRequired) {
+      isValid = isValid && value.trim() !== '';
+    }
+    if (validators.maxLength) {
+      isValid = isValid && value.length <= validators.maxLength;
+    }
+    if (validators.minLength) {
+      isValid = isValid && value.length >= validators.minLength;
+    }
+    return isValid;
   };
 
   render() {
@@ -122,9 +165,17 @@ export default class CustomerInfo extends Component {
         elementType={this.state.orderForm[inputName].elementType}
         value={this.state.orderForm[inputName].value}
         onInputChange={e => this.inputChangeHandler(e, inputName)}
+        touched={this.state.orderForm[inputName].touched}
+        invalid={!this.state.orderForm[inputName].valid}
         key={inputName}
       />
     ));
+
+    const disableButton = Object.values(this.state.orderForm).every(
+      inputName => inputName.valid === true
+    );
+
+    console.log(disableButton);
 
     return (
       <div className={classes.CustomerInfo}>
@@ -132,9 +183,9 @@ export default class CustomerInfo extends Component {
         {this.state.loading ? (
           <Spinner />
         ) : (
-          <form>
+          <form onSubmit={this.submitOrderHandler}>
             {orderInputs}
-            <Button click={this.submitOrderHandler} btnType="Success">
+            <Button disabled={!disableButton} btnType="Success">
               Submit
             </Button>
           </form>
