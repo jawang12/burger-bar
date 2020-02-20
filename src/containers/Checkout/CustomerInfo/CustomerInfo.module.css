@@ -8,11 +8,6 @@
   padding: 10px;
 }
 
-.CustomerInfo input {
-  display: block;
-  margin: auto;
-}
-
 @media (min-width: 600px) {
   .CustomerInfo {
     width: 500px;
