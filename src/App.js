@@ -4,11 +4,13 @@ import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Orders from './containers/Orders/Orders';
-import { createStore } from 'redux';
+import { createStore, compose } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from './store/root-reducer';
 
-const store = createStore(rootReducer);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(rootReducer, composeEnhancers());
 
 function App() {
   return (
