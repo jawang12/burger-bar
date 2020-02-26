@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import axios from '../../../axios/orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
+import { connect } from 'react-redux';
 
-export default class CustomerInfo extends Component {
+class CustomerInfo extends Component {
   state = {
     loading: false,
     orderForm: {
@@ -199,3 +200,10 @@ CustomerInfo.propTypes = {
   price: PropTypes.number.isRequired,
   ingredients: PropTypes.object.isRequired
 };
+
+const mapStateToProps = ({ ingredients, price }) => ({
+  ingredients,
+  price
+});
+
+export default connect(mapStateToProps)(CustomerInfo);
