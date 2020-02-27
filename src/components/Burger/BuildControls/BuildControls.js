@@ -54,7 +54,7 @@ export default BuildControls;
 BuildControls.propTypes = {
   removeIngredient: PropTypes.func.isRequired,
   addIngredient: PropTypes.func.isRequired,
-  disabledStatus: PropTypes.object.isRequired,
+  disabledStatus: PropTypes.object,
   price: PropTypes.number.isRequired,
   isOrderable: PropTypes.bool.isRequired,
   isOrdering: PropTypes.func.isRequired

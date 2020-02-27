@@ -12,27 +12,20 @@ import { connect } from 'react-redux';
 
 class BurgerBuilder extends Component {
   state = {
-    isOrdering: false,
-    loading: false,
-    error: null
+    isOrdering: false
   };
 
   componentDidMount() {
-    // axios
-    //   .get('/ingredients.json')
-    //   .then(response => {
-    //     this.setState({ ingredients: response.data });
-    //   })
-    //   .catch(error => {
-    //     this.setState({ error });
-    //     console.log(error);
-    //   });
+    this.props.thunkSetIngredients();
   }
 
   updateOrderableHandler = () => {
+    if (!this.props.ingredients) return false;
+
     const totalPrice = Object.values(this.props.ingredients).reduce(
       (sum, currentVal) => sum + currentVal
     );
+
     return totalPrice > 0;
   };
 
@@ -66,9 +59,7 @@ class BurgerBuilder extends Component {
       btndDisabledStatus[key] = btndDisabledStatus[key] ? false : true;
     }
     let orderSummary = null;
-    if (this.state.loading) {
-      orderSummary = <Spinner />;
-    } else if (this.props.ingredients) {
+    if (this.props.ingredients) {
       orderSummary = (
         <OrderSummary
           ingredients={this.props.ingredients}
@@ -99,8 +90,8 @@ class BurgerBuilder extends Component {
               isOrdering={this.isOrderingHandler}
             />
           </>
-        ) : this.state.error ? (
-          <p>{this.state.error.message}</p>
+        ) : this.props.error ? (
+          <p>{this.props.error.message}</p>
         ) : (
           <Spinner />
         )}
@@ -111,14 +102,16 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = ({ burgerBuilder }) => ({
   ingredients: burgerBuilder.ingredients,
-  price: burgerBuilder.price
+  price: burgerBuilder.price,
+  error: burgerBuilder.error
 });
 
 const mapDispatchToProps = dispatch => ({
   addIngredient: ingredientName =>
     dispatch(actions.addIngredient(ingredientName)),
   removeIngredient: ingredientName =>
-    dispatch(actions.removeIngredient(ingredientName))
+    dispatch(actions.removeIngredient(ingredientName)),
+  thunkSetIngredients: () => dispatch(actions.thunkSetIngredients())
 });
 
 export default connect(

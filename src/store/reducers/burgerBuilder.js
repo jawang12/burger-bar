@@ -1,13 +1,9 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
-  ingredients: {
-    lettuce: 0,
-    bacon: 0,
-    cheese: 0,
-    patty: 0
-  },
-  price: 2.5
+  ingredients: null,
+  price: 2.5,
+  error: null
 };
 
 const prices = {
@@ -19,6 +15,18 @@ const prices = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case actionTypes.SET_INGREDIENTS:
+      const { lettuce, bacon, patty, cheese } = action.ingredients;
+      return {
+        price: 2.5,
+        ingredients: {
+          lettuce,
+          bacon,
+          cheese,
+          patty
+        },
+        error: false
+      };
     case actionTypes.ADD_INGREDIENT:
       return {
         ingredients: {
@@ -34,6 +42,11 @@ export default (state = initialState, action) => {
           ...state.ingredients,
           [action.ingredientName]: state.ingredients[action.ingredientName] - 1
         }
+      };
+    case actionTypes.FETCH_INGREDIENTS_FAILED:
+      return {
+        ...state,
+        error: action.err
       };
     default:
       return state;

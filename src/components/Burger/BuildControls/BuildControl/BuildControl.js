@@ -24,7 +24,7 @@ const BuildControl = props => {
 export default BuildControl;
 
 BuildControl.propTypes = {
-  disabledStatus: PropTypes.bool.isRequired,
+  disabledStatus: PropTypes.bool,
   onAddIngredient: PropTypes.func.isRequired,
   onRemoveIngredient: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired
