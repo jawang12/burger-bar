@@ -201,9 +201,12 @@ CustomerInfo.propTypes = {
   ingredients: PropTypes.object.isRequired
 };
 
-const mapStateToProps = ({ ingredients, price }) => ({
-  ingredients,
-  price
-});
+const mapStateToProps = state => {
+  const { ingredients, price } = state.burgerBuilder;
+  return {
+    ingredients,
+    price
+  };
+};
 
 export default connect(mapStateToProps)(CustomerInfo);

@@ -4,7 +4,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
-import * as actionTypes from '../../store/actions';
+import * as actions from '../../store/actions/';
 
 import axios from '../../axios/orders';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
@@ -109,16 +109,16 @@ class BurgerBuilder extends Component {
   }
 }
 
-const mapStateToProps = ({ ingredients, price }) => ({
-  ingredients,
-  price
+const mapStateToProps = ({ burgerBuilder }) => ({
+  ingredients: burgerBuilder.ingredients,
+  price: burgerBuilder.price
 });
 
 const mapDispatchToProps = dispatch => ({
   addIngredient: ingredientName =>
-    dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientName }),
+    dispatch(actions.addIngredient(ingredientName)),
   removeIngredient: ingredientName =>
-    dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredientName })
+    dispatch(actions.removeIngredient(ingredientName))
 });
 
 export default connect(
