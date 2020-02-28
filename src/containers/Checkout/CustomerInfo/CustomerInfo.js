@@ -6,6 +6,8 @@ import axios from '../../../axios/orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import { thunkSubmitOrder } from '../../../store/actions/orders';
 
 class CustomerInfo extends Component {
   state = {
@@ -101,8 +103,6 @@ class CustomerInfo extends Component {
 
   submitOrderHandler = e => {
     e.preventDefault();
-    this.setState({ loading: true });
-
     const customerInfo = Object.keys(this.state.orderForm).reduce(
       (obj, inputName) => {
         obj[inputName] = this.state.orderForm[inputName].value;
@@ -117,17 +117,7 @@ class CustomerInfo extends Component {
       price: this.props.price
     };
 
-    axios
-      .post('/orders.json', fullOrder)
-      .then(res => {
-        this.setState({ loading: false });
-        this.props.history.push('/');
-        console.log('success from CustomerInfo', res);
-      })
-      .catch(err => {
-        this.setState({ loading: false });
-        console.log(err);
-      });
+    this.props.thunkSubmitOrder(fullOrder);
   };
 
   inputChangeHandler = (e, name) => {
@@ -209,4 +199,11 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(CustomerInfo);
+const mapDispatchToProps = dispatch => ({
+  thunkSubmitOrder: order => dispatch(thunkSubmitOrder(order))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(CustomerInfo, axios));
