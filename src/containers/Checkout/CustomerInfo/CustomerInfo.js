@@ -11,7 +11,6 @@ import { thunkSubmitOrder } from '../../../store/actions/orders';
 
 class CustomerInfo extends Component {
   state = {
-    loading: false,
     orderForm: {
       name: {
         elementType: 'input',
@@ -171,7 +170,7 @@ class CustomerInfo extends Component {
     return (
       <div className={classes.CustomerInfo}>
         <h3>Please enter your contact information</h3>
-        {this.state.loading ? (
+        {this.props.loading ? (
           <Spinner />
         ) : (
           <form onSubmit={this.submitOrderHandler}>
@@ -193,9 +192,11 @@ CustomerInfo.propTypes = {
 
 const mapStateToProps = state => {
   const { ingredients, price } = state.burgerBuilder;
+  const { loading } = state.orders;
   return {
     ingredients,
-    price
+    price,
+    loading
   };
 };
 

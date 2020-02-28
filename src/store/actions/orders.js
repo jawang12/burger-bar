@@ -12,7 +12,16 @@ const failedOrder = error => ({
   error
 });
 
+export const initOrder = () => ({
+  type: actionTypes.INIT_ORDER
+});
+
+const submittingOrder = () => ({
+  type: actionTypes.SUBMITTING_ORDER
+});
+
 export const thunkSubmitOrder = orderData => async dispatch => {
+  dispatch(submittingOrder());
   try {
     const orderReq = await axios.post('/orders.json', orderData);
     console.log('success from CustomerInfo', orderReq);

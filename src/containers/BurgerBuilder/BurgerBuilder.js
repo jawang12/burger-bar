@@ -43,6 +43,7 @@ class BurgerBuilder extends Component {
       // state: { ingredients: this.state.ingredients }
       // search: '?' + queryParams.join('&')
     });
+    this.props.initOrder();
   };
 
   cancelOrderHandler = () => {
@@ -111,7 +112,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.addIngredient(ingredientName)),
   removeIngredient: ingredientName =>
     dispatch(actions.removeIngredient(ingredientName)),
-  thunkSetIngredients: () => dispatch(actions.thunkSetIngredients())
+  thunkSetIngredients: () => dispatch(actions.thunkSetIngredients()),
+  initOrder: () => dispatch(actions.initOrder())
 });
 
 export default connect(
