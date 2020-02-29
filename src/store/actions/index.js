@@ -4,4 +4,4 @@ export {
   thunkSetIngredients
 } from './burgerBuilder';
 
-export { thunkSubmitOrder, initOrder } from './orders';
+export { thunkSubmitOrder, initOrder, thunkFetchOrders } from './orders';

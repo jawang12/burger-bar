@@ -32,6 +32,22 @@ export default (state = initialState, action) => {
         ...state,
         ordering: true
       };
+    case actionTypes.INIT_FETCH_ORDERS:
+      return {
+        ...state,
+        loading: true
+      };
+    case actionTypes.FETCH_ORDERS_FAIL:
+      return {
+        ...state,
+        loading: false
+      };
+    case actionTypes.FETCH_ORDERS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        orders: action.orders
+      };
     default:
       return state;
   }

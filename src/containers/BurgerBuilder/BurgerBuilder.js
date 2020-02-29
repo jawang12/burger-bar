@@ -38,6 +38,7 @@ class BurgerBuilder extends Component {
     //     encodeURI(ingredient) + '=' + encodeURI(ingredients[ingredient])
     //   );
     // }
+
     this.props.history.push({
       pathname: '/checkout'
       // state: { ingredients: this.state.ingredients }
