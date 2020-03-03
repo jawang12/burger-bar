@@ -2,6 +2,7 @@ import React from 'react';
 import Main from './containers/Main/Main';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
+import Login from './containers/Auth/Login';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Orders from './containers/Orders/Orders';
 import { createStore, compose, applyMiddleware } from 'redux';
@@ -24,6 +25,7 @@ function App() {
           <Main>
             <Route path="/checkout" component={Checkout} />
             <Route path="/orders" component={Orders} />
+            <Route path="/login" component={Login} />
             <Route path="/" exact component={BurgerBuilder} />
           </Main>
         </div>
