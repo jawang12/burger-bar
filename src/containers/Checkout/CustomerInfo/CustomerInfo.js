@@ -78,7 +78,8 @@ class CustomerInfo extends Component {
           placeholder: 'Email'
         },
         validators: {
-          isRequired: true
+          isRequired: true,
+          isEmail: true
         },
         valid: false,
         touched: false,
@@ -144,6 +145,10 @@ class CustomerInfo extends Component {
     }
     if (validators.minLength) {
       isValid = isValid && value.length >= validators.minLength;
+    }
+    if (validators.isEmail) {
+      const emailRegEx = new RegExp(/^\S+@\S+\.\S+$/);
+      isValid = emailRegEx.test(value);
     }
     return isValid;
   };

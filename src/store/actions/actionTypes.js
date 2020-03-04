@@ -11,3 +11,7 @@ export const INIT_ORDER = 'INIT_ORDER';
 export const INIT_FETCH_ORDERS = 'INIT_FETCH_ORDERS';
 export const FETCH_ORDERS_SUCCESS = 'FETCH_ORDERS_SUCCESS';
 export const FETCH_ORDERS_FAIL = 'FETCH_ORDERS_FAIL';
+
+export const INIT_AUTH = 'INIT_AUTH';
+export const VERIFIED_AUTH = 'VERIFIED_AUTH';
+export const FAILED_AUTH = 'FAILED_AUTH';

@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import Button from '../../components/UI/Button/Button';
 import classes from './Login.module.css';
 import Input from '../../components/UI/Input/Input';
+import * as actions from '../../store/actions/';
+import { connect } from 'react-redux';
 
 class Login extends Component {
   state = {
+    hasAccount: false,
     loginForm: {
       email: {
         elementType: 'input',
@@ -24,7 +27,7 @@ class Login extends Component {
       password: {
         elementType: 'input',
         elementConfig: {
-          type: 'text',
+          type: 'password',
           placeholder: 'Password',
           name: 'password'
         },
@@ -76,6 +79,19 @@ class Login extends Component {
     });
   };
 
+  loginHandler = e => {
+    e.preventDefault();
+    this.props.thunkVerifyAuth(
+      this.state.loginForm.email.value,
+      this.state.loginForm.password.value,
+      this.state.hasAccount
+    );
+  };
+
+  toggleLoginHander = () => {
+    this.setState(prevState => ({ hasAccount: !prevState.hasAccount }));
+  };
+
   render() {
     const loginInputs = Object.keys(this.state.loginForm).map(inputName => (
       <Input
@@ -91,13 +107,25 @@ class Login extends Component {
 
     return (
       <div className={classes.Login}>
-        <form>
+        <form onSubmit={this.loginHandler}>
           {loginInputs}
-          <Button btnType="Success">Login</Button>
+          <Button btnType="Success">
+            {this.state.hasAccount ? 'Login' : 'Create Account'}
+          </Button>
         </form>
+        <Button btnType="Danger" click={this.toggleLoginHander}>
+          {this.state.hasAccount
+            ? 'Create a new account'
+            : `I'm an existing user`}
+        </Button>
       </div>
     );
   }
 }
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+  thunkVerifyAuth: (email, password, hasAccount) =>
+    dispatch(actions.thunkVerifyAuth(email, password, hasAccount))
+});
+
+export default connect(null, mapDispatchToProps)(Login);
