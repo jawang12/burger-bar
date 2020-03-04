@@ -4,6 +4,7 @@ import classes from './Login.module.css';
 import Input from '../../components/UI/Input/Input';
 import * as actions from '../../store/actions/';
 import { connect } from 'react-redux';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 class Login extends Component {
   state = {
@@ -93,7 +94,7 @@ class Login extends Component {
   };
 
   render() {
-    const loginInputs = Object.keys(this.state.loginForm).map(inputName => (
+    let loginInputs = Object.keys(this.state.loginForm).map(inputName => (
       <Input
         elementConfig={this.state.loginForm[inputName].elementConfig}
         elementType={this.state.loginForm[inputName].elementType}
@@ -105,9 +106,20 @@ class Login extends Component {
       />
     ));
 
+    if (this.props.loading) {
+      loginInputs = <Spinner />;
+    }
+
+    let errorMessage = null;
+
+    if (this.props.error) {
+      errorMessage = <p>{this.props.error.message}</p>;
+    }
+
     return (
       <div className={classes.Login}>
         <form onSubmit={this.loginHandler}>
+          {errorMessage}
           {loginInputs}
           <Button btnType="Success">
             {this.state.hasAccount ? 'Login' : 'Create Account'}
@@ -123,9 +135,14 @@ class Login extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  loading: state.auth.loading,
+  error: state.auth.error
+});
+
 const mapDispatchToProps = dispatch => ({
   thunkVerifyAuth: (email, password, hasAccount) =>
     dispatch(actions.thunkVerifyAuth(email, password, hasAccount))
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

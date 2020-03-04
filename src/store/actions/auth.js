@@ -17,6 +17,20 @@ const verifiedAuth = (idToken, userId) => ({
   userId
 });
 
+let timer = null;
+
+const logout = () => {
+  clearTimeout(timer);
+  return {
+    type: actionTypes.LOGOUT_AUTH
+  };
+};
+export const thunkCheckAuthTimeout = expTime => dispatch => {
+  timer = setTimeout(() => {
+    dispatch(logout());
+  }, +expTime * 1000);
+};
+
 export const thunkVerifyAuth = (
   email,
   password,
@@ -26,7 +40,8 @@ export const thunkVerifyAuth = (
   try {
     const body = {
       email,
-      password
+      password,
+      returnSecureToken: true
     };
 
     let url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_KEY}`;
@@ -37,6 +52,7 @@ export const thunkVerifyAuth = (
     const data = await axios.post(url, body);
     console.log(data);
     dispatch(verifiedAuth(data.data.idToken, data.data.localId));
+    dispatch(thunkCheckAuthTimeout(data.data.expiresIn));
   } catch (err) {
     dispatch(failedAuth(err.response.data.error));
   }
