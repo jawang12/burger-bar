@@ -19,7 +19,7 @@ const verifiedAuth = (idToken, userId) => ({
 
 let timer = null;
 
-const logout = () => {
+export const logout = () => {
   clearTimeout(timer);
   return {
     type: actionTypes.LOGOUT_AUTH

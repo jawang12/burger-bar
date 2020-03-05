@@ -8,7 +8,7 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 
 class Login extends Component {
   state = {
-    hasAccount: false,
+    hasAccount: true,
     loginForm: {
       email: {
         elementType: 'input',

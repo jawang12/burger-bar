@@ -117,7 +117,7 @@ class CustomerInfo extends Component {
       price: this.props.price
     };
 
-    this.props.thunkSubmitOrder(fullOrder);
+    this.props.thunkSubmitOrder(fullOrder, this.props.idToken);
   };
 
   inputChangeHandler = (e, name) => {
@@ -198,15 +198,18 @@ CustomerInfo.propTypes = {
 const mapStateToProps = state => {
   const { ingredients, price } = state.burgerBuilder;
   const { loading } = state.orders;
+  const { idToken } = state.auth;
   return {
     ingredients,
     price,
-    loading
+    loading,
+    idToken
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  thunkSubmitOrder: order => dispatch(thunkSubmitOrder(order))
+  thunkSubmitOrder: (order, idToken) =>
+    dispatch(thunkSubmitOrder(order, idToken))
 });
 
 export default connect(

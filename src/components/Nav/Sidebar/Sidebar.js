@@ -18,7 +18,7 @@ const Sidebar = props => {
           <Logo />
         </div>
         <nav>
-          <NavItems />
+          <NavItems isAuthenticated={props.isAuthenticated} />
         </nav>
       </div>
     </>
