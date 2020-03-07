@@ -7,7 +7,7 @@ const NavItems = props => (
     <NavItem link="/" exact>
       Build Your Burger
     </NavItem>
-    <NavItem link="/orders">Orders</NavItem>
+    {props.isAuthenticated ? <NavItem link="/orders">Orders</NavItem> : null}
     {props.isAuthenticated ? (
       <NavItem link="/logout">Logout</NavItem>
     ) : (

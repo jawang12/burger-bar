@@ -5,6 +5,7 @@ import Input from '../../components/UI/Input/Input';
 import * as actions from '../../store/actions/';
 import { connect } from 'react-redux';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import { Redirect } from 'react-router-dom';
 
 class Login extends Component {
   state = {
@@ -116,6 +117,10 @@ class Login extends Component {
       errorMessage = <p>{this.props.error.message}</p>;
     }
 
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/" />;
+    }
+
     return (
       <div className={classes.Login}>
         <form onSubmit={this.loginHandler}>
@@ -136,6 +141,7 @@ class Login extends Component {
 }
 
 const mapStateToProps = state => ({
+  isAuthenticated: state.auth.idToken && true,
   loading: state.auth.loading,
   error: state.auth.error
 });
