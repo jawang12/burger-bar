@@ -118,7 +118,11 @@ class Login extends Component {
     }
 
     if (this.props.isAuthenticated) {
-      return <Redirect to="/" />;
+      return this.props.isBuilding ? (
+        <Redirect to="/checkout" />
+      ) : (
+        <Redirect to="/" />
+      );
     }
 
     return (
@@ -143,7 +147,8 @@ class Login extends Component {
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.idToken && true,
   loading: state.auth.loading,
-  error: state.auth.error
+  error: state.auth.error,
+  isBuilding: state.burgerBuilder.isBuilding
 });
 
 const mapDispatchToProps = dispatch => ({

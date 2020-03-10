@@ -56,6 +56,7 @@ class BurgerBuilder extends Component {
       this.setState({ isOrdering: true });
     } else {
       this.props.history.push('/login');
+      this.props.initOrder();
     }
   };
 
