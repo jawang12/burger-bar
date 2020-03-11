@@ -3,11 +3,16 @@ import classes from './Main.module.css';
 import Toolbar from '../../components/Nav/Toolbar/Toolbar';
 import Sidebar from '../../components/Nav/Sidebar/Sidebar';
 import { connect } from 'react-redux';
+import { thunkCheckRefreshToken } from '../../store/actions';
 
 class Main extends Component {
   state = {
     opened: false
   };
+
+  componentDidMount() {
+    this.props.checkPersistantAuth();
+  }
 
   toggleSidebarHandler = () => {
     this.setState(prevState => {
@@ -39,4 +44,8 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.idToken && true
 });
 
-export default connect(mapStateToProps)(Main);
+const mapDispatchToProps = dispatch => ({
+  checkPersistantAuth: () => dispatch(thunkCheckRefreshToken())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

@@ -6,4 +6,4 @@ export {
 
 export { thunkSubmitOrder, initOrder, thunkFetchOrders } from './orders';
 
-export { thunkVerifyAuth, logout } from './auth';
+export { thunkVerifyAuth, logout, thunkCheckRefreshToken } from './auth';
