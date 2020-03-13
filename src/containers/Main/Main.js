@@ -11,7 +11,7 @@ class Main extends Component {
   };
 
   componentDidMount() {
-    this.props.checkPersistantAuth();
+    this.props.checkPersistentAuth();
   }
 
   toggleSidebarHandler = () => {
@@ -45,7 +45,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  checkPersistantAuth: () => dispatch(thunkCheckRefreshToken())
+  checkPersistentAuth: () => dispatch(thunkCheckRefreshToken())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
