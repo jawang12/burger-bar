@@ -6,6 +6,7 @@ import * as actions from '../../store/actions/';
 import { connect } from 'react-redux';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import { Redirect } from 'react-router-dom';
+import { validator } from '../../shared/utils';
 
 class Login extends Component {
   state = {
@@ -44,25 +45,6 @@ class Login extends Component {
     }
   };
 
-  validator = (validators, value) => {
-    let isValid = true;
-
-    if (validators.isRequired) {
-      isValid = isValid && value.trim() !== '';
-    }
-    if (validators.maxLength) {
-      isValid = isValid && value.length <= validators.maxLength;
-    }
-    if (validators.minLength) {
-      isValid = isValid && value.length >= validators.minLength;
-    }
-    if (validators.isEmail) {
-      const emailRegEx = new RegExp(/^\S+@\S+\.\S+$/);
-      isValid = emailRegEx.test(value);
-    }
-    return isValid;
-  };
-
   inputChangeHandler = (event, inputName) => {
     const value = event.target.value;
     this.setState({
@@ -72,10 +54,7 @@ class Login extends Component {
           ...this.state.loginForm[inputName],
           value,
           touched: true,
-          valid: this.validator(
-            this.state.loginForm[inputName].validators,
-            value
-          )
+          valid: validator(this.state.loginForm[inputName].validators, value)
         }
       }
     });

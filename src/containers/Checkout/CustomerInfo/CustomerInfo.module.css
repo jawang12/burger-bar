@@ -7,9 +7,3 @@
   box-shadow: 0 2px 4px #ccc;
   padding: 10px;
 }
-
-@media (min-width: 600px) {
-  .CustomerInfo {
-    width: 500px;
-  }
-}

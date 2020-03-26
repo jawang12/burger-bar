@@ -13,7 +13,7 @@ const Sidebar = props => {
   return (
     <>
       <Backdrop show={props.isOpened} onRemoveBackdrop={props.onCloseSidebar} />
-      <div className={sideBarClasses.join(' ')}>
+      <div className={sideBarClasses.join(' ')} onClick={props.onCloseSidebar}>
         <div className={classes.Logo}>
           <Logo />
         </div>

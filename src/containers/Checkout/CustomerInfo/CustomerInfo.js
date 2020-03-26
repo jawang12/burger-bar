@@ -8,6 +8,7 @@ import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { thunkSubmitOrder } from '../../../store/actions/orders';
+import { validator } from '../../../shared/utils';
 
 class CustomerInfo extends Component {
   state = {
@@ -127,31 +128,12 @@ class CustomerInfo extends Component {
 
     updatedFormElement.value = e.target.value;
     updatedFormElement.touched = true;
-    updatedFormElement.valid = this.validator(
+    updatedFormElement.valid = validator(
       updatedFormElement.validators,
       e.target.value
     );
     updatedOrderForm[name] = updatedFormElement;
     this.setState({ orderForm: updatedOrderForm });
-  };
-
-  validator = (validators, value) => {
-    let isValid = true;
-
-    if (validators.isRequired) {
-      isValid = isValid && value.trim() !== '';
-    }
-    if (validators.maxLength) {
-      isValid = isValid && value.length <= validators.maxLength;
-    }
-    if (validators.minLength) {
-      isValid = isValid && value.length >= validators.minLength;
-    }
-    if (validators.isEmail) {
-      const emailRegEx = new RegExp(/^\S+@\S+\.\S+$/);
-      isValid = emailRegEx.test(value);
-    }
-    return isValid;
   };
 
   render() {
