@@ -114,7 +114,8 @@ class CustomerInfo extends Component {
     const fullOrder = {
       customerInfo,
       ingredients: this.props.ingredients,
-      price: this.props.price
+      price: this.props.price,
+      userId: this.props.userId
     };
 
     this.props.thunkSubmitOrder(fullOrder, this.props.idToken);
@@ -170,8 +171,6 @@ class CustomerInfo extends Component {
       inputName => inputName.valid === true
     );
 
-    console.log(disableButton);
-
     return (
       <div className={classes.CustomerInfo}>
         <h3>Please enter your contact information</h3>
@@ -198,11 +197,12 @@ CustomerInfo.propTypes = {
 const mapStateToProps = state => {
   const { ingredients, price } = state.burgerBuilder;
   const { loading } = state.orders;
-  const { idToken } = state.auth;
+  const { idToken, userId } = state.auth;
   return {
     ingredients,
     price,
     loading,
+    userId,
     idToken
   };
 };

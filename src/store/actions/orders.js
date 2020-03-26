@@ -48,10 +48,12 @@ export const thunkSubmitOrder = (orderData, idToken) => async dispatch => {
   }
 };
 
-export const thunkFetchOrders = idToken => async dispatch => {
+export const thunkFetchOrders = (idToken, userId) => async dispatch => {
   dispatch(initFetchOrders());
   try {
-    const firebaseOrder = await axios.get(`/orders.json?auth=${idToken}`);
+    const firebaseOrder = await axios.get(
+      `/orders.json?auth=${idToken}&orderBy="userId"&equalTo="${userId}"`
+    );
     const orders = Object.keys(firebaseOrder.data).map(key => ({
       id: key,
       ...firebaseOrder['data'][key]
