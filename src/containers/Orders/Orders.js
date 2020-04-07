@@ -6,7 +6,7 @@ import { thunkFetchOrders } from '../../store/actions';
 import { connect } from 'react-redux';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
-class Orders extends Component {
+export class Orders extends Component {
   componentDidMount() {
     this.props.thunkFetchOrders(this.props.idToken, this.props.userId);
   }
