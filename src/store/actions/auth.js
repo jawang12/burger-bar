@@ -6,7 +6,7 @@ const initAuth = () => ({
   type: actionTypes.INIT_AUTH
 });
 
-const failedAuth = err => ({
+const failedAuth = (err) => ({
   type: actionTypes.FAILED_AUTH,
   err
 });
@@ -20,23 +20,20 @@ const verifiedAuth = (idToken, userId) => ({
 let timer = null;
 
 export const logout = () => {
-  localStorage.clear();
   clearTimeout(timer);
   return {
-    type: actionTypes.LOGOUT_AUTH
+    type: actionTypes.INITIATE_LOGOUT_AUTH
   };
 };
-export const thunkCheckAuthTimeout = expTime => dispatch => {
+export const thunkCheckAuthTimeout = (expTime) => (dispatch) => {
   timer = setTimeout(() => {
     dispatch(logout());
   }, +expTime * 1000);
 };
 
-export const thunkVerifyAuth = (
-  email,
-  password,
-  hasAccount
-) => async dispatch => {
+export const thunkVerifyAuth = (email, password, hasAccount) => async (
+  dispatch
+) => {
   dispatch(initAuth());
   try {
     const body = {
@@ -60,7 +57,7 @@ export const thunkVerifyAuth = (
   }
 };
 
-export const thunkCheckRefreshToken = () => async dispatch => {
+export const thunkCheckRefreshToken = () => async (dispatch) => {
   const token = localStorage.getItem('refreshToken');
   if (!token) return;
   const currentTime = new Date();

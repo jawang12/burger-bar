@@ -16,3 +16,4 @@ export const INIT_AUTH = 'INIT_AUTH';
 export const VERIFIED_AUTH = 'VERIFIED_AUTH';
 export const FAILED_AUTH = 'FAILED_AUTH';
 export const LOGOUT_AUTH = 'LOGOUT_AUTH';
+export const INITIATE_LOGOUT_AUTH = 'INITIATE_LOGOUT_AUTH';
