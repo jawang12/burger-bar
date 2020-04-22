@@ -2,16 +2,16 @@ import { FIREBASE_KEY } from '../../keys';
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
-const initAuth = () => ({
+export const initAuth = () => ({
   type: actionTypes.INIT_AUTH
 });
 
-const failedAuth = (err) => ({
+export const failedAuth = (err) => ({
   type: actionTypes.FAILED_AUTH,
   err
 });
 
-const verifiedAuth = (idToken, userId) => ({
+export const verifiedAuth = (idToken, userId) => ({
   type: actionTypes.VERIFIED_AUTH,
   idToken,
   userId
@@ -31,7 +31,7 @@ export const thunkCheckAuthTimeout = (expTime) => (dispatch) => {
   }, +expTime * 1000);
 };
 
-export const thunkVerifyAuth = (email, password, hasAccount) => async (
+/* export const thunkVerifyAuth = (email, password, hasAccount) => async (
   dispatch
 ) => {
   dispatch(initAuth());
@@ -55,7 +55,14 @@ export const thunkVerifyAuth = (email, password, hasAccount) => async (
   } catch (err) {
     dispatch(failedAuth(err.response.data.error));
   }
-};
+}; */
+
+export const sagaVerifyAuth = (email, password, hasAccount) => ({
+  email,
+  password,
+  hasAccount,
+  type: actionTypes.SAGA_INIT_VERIFY_AUTH
+});
 
 export const thunkCheckRefreshToken = () => async (dispatch) => {
   const token = localStorage.getItem('refreshToken');
@@ -83,7 +90,7 @@ export const thunkCheckRefreshToken = () => async (dispatch) => {
   }
 };
 
-function storeAuthInLS(expTime, refreshToken) {
+export function storeAuthInLS(expTime, refreshToken) {
   const expirationTime = new Date(Date.now() + +expTime * 1000);
   localStorage.setItem('expirationTime', expirationTime);
   localStorage.setItem('refreshToken', refreshToken);
