@@ -14,7 +14,7 @@ export function* logoutSaga(action) {
 }
 
 export function* verifyAuthSaga({ email, password, hasAccount }) {
-  yield actions.initAuth();
+  yield put(actions.initAuth());
   const body = {
     email,
     password,
