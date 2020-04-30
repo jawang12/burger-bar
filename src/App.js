@@ -5,8 +5,9 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Logout from './containers/Auth/Logout';
 import Spinner from './components/UI/Spinner/Spinner';
+import Orders from './containers/Orders/Orders';
 
-const LazyLoadOrders = lazy(() => import('./containers/Orders/Orders'));
+// const LazyLoadOrders = lazy(() => import('./containers/Orders/Orders'));
 const LazyLoadCheckout = lazy(() => import('./containers/Checkout/Checkout'));
 const LazyLoadLogin = lazy(() => import('./containers/Auth/Login'));
 
@@ -45,14 +46,15 @@ const App = (props) => {
             </Suspense>
           )}
         />
-        <Route
+        {/* <Route
           path="/orders"
           render={() => (
             <Suspense fallback={<Spinner />}>
               <LazyLoadOrders />
             </Suspense>
           )}
-        />
+        /> */}
+        <Route path="/orders" component={Orders} />
         <Route path="/logout" component={Logout} />
         <Route path="/" exact component={BurgerBuilder} />
       </Switch>

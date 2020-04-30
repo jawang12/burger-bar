@@ -1,50 +1,42 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import classes from './Main.module.css';
 import Toolbar from '../../components/Nav/Toolbar/Toolbar';
 import Sidebar from '../../components/Nav/Sidebar/Sidebar';
 import { connect } from 'react-redux';
 import { thunkCheckRefreshToken } from '../../store/actions';
 
-class Main extends Component {
-  state = {
-    opened: false
+const Main = ({ checkPersistentAuth, isAuthenticated, children }) => {
+  const [opened, setOpenedState] = useState(false);
+
+  useEffect(() => {
+    checkPersistentAuth();
+  }, [checkPersistentAuth]);
+
+  const toggleSidebarHandler = () => {
+    setOpenedState((prevState) => !prevState);
   };
 
-  componentDidMount() {
-    this.props.checkPersistentAuth();
-  }
+  return (
+    <>
+      <Toolbar
+        onOpenSidebar={toggleSidebarHandler}
+        isAuthenticated={isAuthenticated}
+      />
+      <Sidebar
+        isOpened={opened}
+        onCloseSidebar={toggleSidebarHandler}
+        isAuthenticated={isAuthenticated}
+      />
+      <main className={classes.MainContent}>{children}</main>
+    </>
+  );
+};
 
-  toggleSidebarHandler = () => {
-    this.setState(prevState => {
-      return {
-        opened: !prevState.opened
-      };
-    });
-  };
-
-  render() {
-    return (
-      <>
-        <Toolbar
-          onOpenSidebar={this.toggleSidebarHandler}
-          isAuthenticated={this.props.isAuthenticated}
-        />
-        <Sidebar
-          isOpened={this.state.opened}
-          onCloseSidebar={this.toggleSidebarHandler}
-          isAuthenticated={this.props.isAuthenticated}
-        />
-        <main className={classes.MainContent}>{this.props.children}</main>
-      </>
-    );
-  }
-}
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.idToken && true
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   checkPersistentAuth: () => dispatch(thunkCheckRefreshToken())
 });
 
