@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Button from '../../../components/UI/Button/Button';
 import classes from './CustomerInfo.module.css';
 import PropTypes from 'prop-types';
@@ -8,9 +8,10 @@ import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { thunkSubmitOrder } from '../../../store/actions/orders';
+import { validator } from '../../../shared/utils';
 
-class CustomerInfo extends Component {
-  state = {
+const CustomerInfo = (props) => {
+  const [state, setFormState] = useState({
     orderForm: {
       name: {
         elementType: 'input',
@@ -99,13 +100,13 @@ class CustomerInfo extends Component {
         value: 'normal'
       }
     }
-  };
+  });
 
-  submitOrderHandler = e => {
+  const submitOrderHandler = (e) => {
     e.preventDefault();
-    const customerInfo = Object.keys(this.state.orderForm).reduce(
+    const customerInfo = Object.keys(state.orderForm).reduce(
       (obj, inputName) => {
-        obj[inputName] = this.state.orderForm[inputName].value;
+        obj[inputName] = state.orderForm[inputName].value;
         return obj;
       },
       {}
@@ -113,100 +114,82 @@ class CustomerInfo extends Component {
 
     const fullOrder = {
       customerInfo,
-      ingredients: this.props.ingredients,
-      price: this.props.price
+      ingredients: props.ingredients,
+      price: props.price,
+      userId: props.userId
     };
 
-    this.props.thunkSubmitOrder(fullOrder);
+    props.thunkSubmitOrder(fullOrder, props.idToken);
   };
 
-  inputChangeHandler = (e, name) => {
-    const updatedOrderForm = { ...this.state.orderForm };
+  const inputChangeHandler = (e, name) => {
+    const updatedOrderForm = { ...state.orderForm };
     const updatedFormElement = { ...updatedOrderForm[name] };
 
     updatedFormElement.value = e.target.value;
     updatedFormElement.touched = true;
-    updatedFormElement.valid = this.validator(
+    updatedFormElement.valid = validator(
       updatedFormElement.validators,
       e.target.value
     );
     updatedOrderForm[name] = updatedFormElement;
-    this.setState({ orderForm: updatedOrderForm });
+    setFormState({ orderForm: updatedOrderForm });
   };
 
-  validator = (validators, value) => {
-    let isValid = true;
+  const orderInputs = Object.keys(state.orderForm).map((inputName) => (
+    <Input
+      elementConfig={state.orderForm[inputName].elementConfig}
+      elementType={state.orderForm[inputName].elementType}
+      value={state.orderForm[inputName].value}
+      onInputChange={(e) => inputChangeHandler(e, inputName)}
+      touched={state.orderForm[inputName].touched}
+      invalid={!state.orderForm[inputName].valid}
+      key={inputName}
+    />
+  ));
 
-    if (validators.isRequired) {
-      isValid = isValid && value.trim() !== '';
-    }
-    if (validators.maxLength) {
-      isValid = isValid && value.length <= validators.maxLength;
-    }
-    if (validators.minLength) {
-      isValid = isValid && value.length >= validators.minLength;
-    }
-    if (validators.isEmail) {
-      const emailRegEx = new RegExp(/^\S+@\S+\.\S+$/);
-      isValid = emailRegEx.test(value);
-    }
-    return isValid;
-  };
+  const disableButton = Object.values(state.orderForm).every(
+    (inputName) => inputName.valid === true
+  );
 
-  render() {
-    const orderInputs = Object.keys(this.state.orderForm).map(inputName => (
-      <Input
-        elementConfig={this.state.orderForm[inputName].elementConfig}
-        elementType={this.state.orderForm[inputName].elementType}
-        value={this.state.orderForm[inputName].value}
-        onInputChange={e => this.inputChangeHandler(e, inputName)}
-        touched={this.state.orderForm[inputName].touched}
-        invalid={!this.state.orderForm[inputName].valid}
-        key={inputName}
-      />
-    ));
-
-    const disableButton = Object.values(this.state.orderForm).every(
-      inputName => inputName.valid === true
-    );
-
-    console.log(disableButton);
-
-    return (
-      <div className={classes.CustomerInfo}>
-        <h3>Please enter your contact information</h3>
-        {this.props.loading ? (
-          <Spinner />
-        ) : (
-          <form onSubmit={this.submitOrderHandler}>
-            {orderInputs}
-            <Button disabled={!disableButton} btnType="Success">
-              Submit
-            </Button>
-          </form>
-        )}
-      </div>
-    );
-  }
-}
+  return (
+    <div className={classes.CustomerInfo}>
+      <h3>Please enter your contact information</h3>
+      {props.loading ? (
+        <Spinner />
+      ) : (
+        <form onSubmit={submitOrderHandler}>
+          {orderInputs}
+          <Button disabled={!disableButton} btnType="Success">
+            Submit
+          </Button>
+        </form>
+      )}
+    </div>
+  );
+};
 
 CustomerInfo.propTypes = {
   price: PropTypes.number.isRequired,
   ingredients: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { ingredients, price } = state.burgerBuilder;
   const { loading } = state.orders;
+  const { idToken, userId } = state.auth;
   return {
     ingredients,
     price,
-    loading
+    loading,
+    userId,
+    idToken
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  thunkSubmitOrder: order => dispatch(thunkSubmitOrder(order))
+const mapDispatchToProps = (dispatch) => ({
+  thunkSubmitOrder: (order, idToken) =>
+    dispatch(thunkSubmitOrder(order, idToken))
 });
 
 export default connect(

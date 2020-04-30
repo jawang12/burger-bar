@@ -52,7 +52,12 @@ class BurgerBuilder extends Component {
   };
 
   isOrderingHandler = () => {
-    this.setState({ isOrdering: true });
+    if (this.props.isAuthenticated) {
+      this.setState({ isOrdering: true });
+    } else {
+      this.props.history.push('/login');
+      this.props.initOrder();
+    }
   };
 
   render() {
@@ -90,6 +95,7 @@ class BurgerBuilder extends Component {
               price={this.props.price}
               isOrderable={this.updateOrderableHandler()}
               isOrdering={this.isOrderingHandler}
+              isAuthenticated={this.props.isAuthenticated}
             />
           </>
         ) : this.props.error ? (
@@ -102,10 +108,11 @@ class BurgerBuilder extends Component {
   }
 }
 
-const mapStateToProps = ({ burgerBuilder }) => ({
+const mapStateToProps = ({ burgerBuilder, auth }) => ({
   ingredients: burgerBuilder.ingredients,
   price: burgerBuilder.price,
-  error: burgerBuilder.error
+  error: burgerBuilder.error,
+  isAuthenticated: auth.idToken && true
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -1,37 +1,75 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import Main from './containers/Main/Main';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
-import Checkout from './containers/Checkout/Checkout';
-import Login from './containers/Auth/Login';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import Logout from './containers/Auth/Logout';
+import Spinner from './components/UI/Spinner/Spinner';
 import Orders from './containers/Orders/Orders';
-import { createStore, compose, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import rootReducer from './store/root-reducer';
-import thunk from 'redux-thunk';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// const LazyLoadOrders = lazy(() => import('./containers/Orders/Orders'));
+const LazyLoadCheckout = lazy(() => import('./containers/Checkout/Checkout'));
+const LazyLoadLogin = lazy(() => import('./containers/Auth/Login'));
 
-const store = createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(thunk))
-);
-
-function App() {
-  return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <div>
-          <Main>
-            <Route path="/checkout" component={Checkout} />
-            <Route path="/orders" component={Orders} />
-            <Route path="/login" component={Login} />
-            <Route path="/" exact component={BurgerBuilder} />
-          </Main>
-        </div>
-      </BrowserRouter>
-    </Provider>
+const App = (props) => {
+  let routes = (
+    <Switch>
+      <Route
+        path="/login"
+        render={() => (
+          <Suspense fallback={<Spinner />}>
+            <LazyLoadLogin />
+          </Suspense>
+        )}
+      />
+      <Route path="/" exact component={BurgerBuilder} />
+      <Redirect to="/" />
+    </Switch>
   );
-}
 
-export default App;
+  if (props.isAuthenticated) {
+    routes = (
+      <Switch>
+        <Route
+          path="/login"
+          render={() => (
+            <Suspense fallback={<Spinner />}>
+              <LazyLoadLogin />
+            </Suspense>
+          )}
+        />
+        <Route
+          path="/checkout"
+          render={() => (
+            <Suspense fallback={<Spinner />}>
+              <LazyLoadCheckout />
+            </Suspense>
+          )}
+        />
+        {/* <Route
+          path="/orders"
+          render={() => (
+            <Suspense fallback={<Spinner />}>
+              <LazyLoadOrders />
+            </Suspense>
+          )}
+        /> */}
+        <Route path="/orders" component={Orders} />
+        <Route path="/logout" component={Logout} />
+        <Route path="/" exact component={BurgerBuilder} />
+      </Switch>
+    );
+  }
+
+  return (
+    <div>
+      <Main>{routes}</Main>
+    </div>
+  );
+};
+
+const mapStateToProps = ({ auth }) => ({
+  isAuthenticated: auth.idToken && true
+});
+
+export default connect(mapStateToProps)(App);

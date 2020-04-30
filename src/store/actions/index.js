@@ -6,4 +6,12 @@ export {
 
 export { thunkSubmitOrder, initOrder, thunkFetchOrders } from './orders';
 
-export { thunkVerifyAuth } from './auth';
+export {
+  sagaVerifyAuth,
+  logout,
+  thunkCheckRefreshToken,
+  thunkCheckAuthTimeout,
+  initAuth,
+  failedAuth,
+  verifiedAuth
+} from './auth';

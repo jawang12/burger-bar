@@ -3,7 +3,8 @@ import * as actionTypes from '../actions/actionTypes';
 const initialState = {
   orders: [],
   loading: false,
-  ordering: false
+  ordering: false,
+  error: null
 };
 
 export default (state = initialState, action) => {
@@ -40,7 +41,8 @@ export default (state = initialState, action) => {
     case actionTypes.FETCH_ORDERS_FAIL:
       return {
         ...state,
-        loading: false
+        loading: false,
+        error: action.error
       };
     case actionTypes.FETCH_ORDERS_SUCCESS:
       return {

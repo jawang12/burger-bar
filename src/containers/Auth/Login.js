@@ -5,10 +5,12 @@ import Input from '../../components/UI/Input/Input';
 import * as actions from '../../store/actions/';
 import { connect } from 'react-redux';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import { Redirect } from 'react-router-dom';
+import { validator } from '../../shared/utils';
 
 class Login extends Component {
   state = {
-    hasAccount: false,
+    hasAccount: true,
     loginForm: {
       email: {
         elementType: 'input',
@@ -43,25 +45,6 @@ class Login extends Component {
     }
   };
 
-  validator = (validators, value) => {
-    let isValid = true;
-
-    if (validators.isRequired) {
-      isValid = isValid && value.trim() !== '';
-    }
-    if (validators.maxLength) {
-      isValid = isValid && value.length <= validators.maxLength;
-    }
-    if (validators.minLength) {
-      isValid = isValid && value.length >= validators.minLength;
-    }
-    if (validators.isEmail) {
-      const emailRegEx = new RegExp(/^\S+@\S+\.\S+$/);
-      isValid = emailRegEx.test(value);
-    }
-    return isValid;
-  };
-
   inputChangeHandler = (event, inputName) => {
     const value = event.target.value;
     this.setState({
@@ -71,18 +54,15 @@ class Login extends Component {
           ...this.state.loginForm[inputName],
           value,
           touched: true,
-          valid: this.validator(
-            this.state.loginForm[inputName].validators,
-            value
-          )
+          valid: validator(this.state.loginForm[inputName].validators, value)
         }
       }
     });
   };
 
-  loginHandler = e => {
+  loginHandler = (e) => {
     e.preventDefault();
-    this.props.thunkVerifyAuth(
+    this.props.sagaVerifyAuth(
       this.state.loginForm.email.value,
       this.state.loginForm.password.value,
       this.state.hasAccount
@@ -90,16 +70,16 @@ class Login extends Component {
   };
 
   toggleLoginHander = () => {
-    this.setState(prevState => ({ hasAccount: !prevState.hasAccount }));
+    this.setState((prevState) => ({ hasAccount: !prevState.hasAccount }));
   };
 
   render() {
-    let loginInputs = Object.keys(this.state.loginForm).map(inputName => (
+    let loginInputs = Object.keys(this.state.loginForm).map((inputName) => (
       <Input
         elementConfig={this.state.loginForm[inputName].elementConfig}
         elementType={this.state.loginForm[inputName].elementType}
         value={this.state.loginForm[inputName].value}
-        onInputChange={e => this.inputChangeHandler(e, inputName)}
+        onInputChange={(e) => this.inputChangeHandler(e, inputName)}
         touched={this.state.loginForm[inputName].touched}
         invalid={!this.state.loginForm[inputName].valid}
         key={inputName}
@@ -114,6 +94,14 @@ class Login extends Component {
 
     if (this.props.error) {
       errorMessage = <p>{this.props.error.message}</p>;
+    }
+
+    if (this.props.isAuthenticated) {
+      return this.props.isBuilding ? (
+        <Redirect to="/checkout" />
+      ) : (
+        <Redirect to="/" />
+      );
     }
 
     return (
@@ -135,14 +123,16 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.idToken && true,
   loading: state.auth.loading,
-  error: state.auth.error
+  error: state.auth.error,
+  isBuilding: state.burgerBuilder.isBuilding
 });
 
-const mapDispatchToProps = dispatch => ({
-  thunkVerifyAuth: (email, password, hasAccount) =>
-    dispatch(actions.thunkVerifyAuth(email, password, hasAccount))
+const mapDispatchToProps = (dispatch) => ({
+  sagaVerifyAuth: (email, password, hasAccount) =>
+    dispatch(actions.sagaVerifyAuth(email, password, hasAccount))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

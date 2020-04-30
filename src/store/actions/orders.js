@@ -7,7 +7,7 @@ const successfulOrder = (orderData, id) => ({
   id
 });
 
-const failedOrder = error => ({
+const failedOrder = (error) => ({
   type: actionTypes.FAILED_ORDER,
   error
 });
@@ -20,12 +20,12 @@ const submittingOrder = () => ({
   type: actionTypes.SUBMITTING_ORDER
 });
 
-const fetchOrdersSuccess = orders => ({
+const fetchOrdersSuccess = (orders) => ({
   type: actionTypes.FETCH_ORDERS_SUCCESS,
   orders
 });
 
-const fetchOrdersFail = error => ({
+const fetchOrdersFail = (error) => ({
   type: actionTypes.FETCH_ORDERS_FAIL,
   error
 });
@@ -34,10 +34,13 @@ const initFetchOrders = () => ({
   type: actionTypes.INIT_FETCH_ORDERS
 });
 
-export const thunkSubmitOrder = orderData => async dispatch => {
+export const thunkSubmitOrder = (orderData, idToken) => async (dispatch) => {
   dispatch(submittingOrder());
   try {
-    const orderReq = await axios.post('/orders.json', orderData);
+    const orderReq = await axios.post(
+      `/orders.json?auth=${idToken}`,
+      orderData
+    );
     console.log('success from CustomerInfo', orderReq);
     dispatch(successfulOrder(orderData, orderReq.data.name));
   } catch (error) {
@@ -45,11 +48,14 @@ export const thunkSubmitOrder = orderData => async dispatch => {
   }
 };
 
-export const thunkFetchOrders = () => async dispatch => {
+export const thunkFetchOrders = (idToken, userId) => async (dispatch) => {
   dispatch(initFetchOrders());
   try {
-    const firebaseOrder = await axios.get('/orders.json');
-    const orders = Object.keys(firebaseOrder.data).map(key => ({
+    const firebaseOrder = await axios.get(
+      `/orders.json?auth=${idToken}&orderBy="userId"&equalTo="${userId}"`
+    );
+    const userOrders = firebaseOrder.data;
+    const orders = Object.keys(userOrders).map((key) => ({
       id: key,
       ...firebaseOrder['data'][key]
     }));
