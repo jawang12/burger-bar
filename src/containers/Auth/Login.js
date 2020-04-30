@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Button from '../../components/UI/Button/Button';
 import classes from './Login.module.css';
 import Input from '../../components/UI/Input/Input';
@@ -8,9 +8,9 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 import { Redirect } from 'react-router-dom';
 import { validator } from '../../shared/utils';
 
-class Login extends Component {
-  state = {
-    hasAccount: true,
+const Login = (props) => {
+  const [hasAccount, setHasAccount] = useState(true);
+  const [state, setFormState] = useState({
     loginForm: {
       email: {
         elementType: 'input',
@@ -43,85 +43,77 @@ class Login extends Component {
         value: ''
       }
     }
-  };
+  });
 
-  inputChangeHandler = (event, inputName) => {
+  const inputChangeHandler = (event, inputName) => {
     const value = event.target.value;
-    this.setState({
+    setFormState((prevFormState) => ({
       loginForm: {
-        ...this.state.loginForm,
+        ...prevFormState.loginForm,
         [inputName]: {
-          ...this.state.loginForm[inputName],
+          ...prevFormState.loginForm[inputName],
           value,
           touched: true,
-          valid: validator(this.state.loginForm[inputName].validators, value)
+          valid: validator(prevFormState.loginForm[inputName].validators, value)
         }
       }
-    });
+    }));
   };
 
-  loginHandler = (e) => {
+  const loginHandler = (e) => {
     e.preventDefault();
-    this.props.sagaVerifyAuth(
-      this.state.loginForm.email.value,
-      this.state.loginForm.password.value,
-      this.state.hasAccount
+    props.sagaVerifyAuth(
+      state.loginForm.email.value,
+      state.loginForm.password.value,
+      hasAccount
     );
   };
 
-  toggleLoginHander = () => {
-    this.setState((prevState) => ({ hasAccount: !prevState.hasAccount }));
+  const toggleLoginHander = () => {
+    setHasAccount((prevHasAccount) => !prevHasAccount);
   };
 
-  render() {
-    let loginInputs = Object.keys(this.state.loginForm).map((inputName) => (
-      <Input
-        elementConfig={this.state.loginForm[inputName].elementConfig}
-        elementType={this.state.loginForm[inputName].elementType}
-        value={this.state.loginForm[inputName].value}
-        onInputChange={(e) => this.inputChangeHandler(e, inputName)}
-        touched={this.state.loginForm[inputName].touched}
-        invalid={!this.state.loginForm[inputName].valid}
-        key={inputName}
-      />
-    ));
+  let loginInputs = Object.keys(state.loginForm).map((inputName) => (
+    <Input
+      elementConfig={state.loginForm[inputName].elementConfig}
+      elementType={state.loginForm[inputName].elementType}
+      value={state.loginForm[inputName].value}
+      onInputChange={(e) => inputChangeHandler(e, inputName)}
+      touched={state.loginForm[inputName].touched}
+      invalid={!state.loginForm[inputName].valid}
+      key={inputName}
+    />
+  ));
 
-    if (this.props.loading) {
-      loginInputs = <Spinner />;
-    }
-
-    let errorMessage = null;
-
-    if (this.props.error) {
-      errorMessage = <p>{this.props.error.message}</p>;
-    }
-
-    if (this.props.isAuthenticated) {
-      return this.props.isBuilding ? (
-        <Redirect to="/checkout" />
-      ) : (
-        <Redirect to="/" />
-      );
-    }
-
-    return (
-      <div className={classes.Login}>
-        <form onSubmit={this.loginHandler}>
-          {errorMessage}
-          {loginInputs}
-          <Button btnType="Success">
-            {this.state.hasAccount ? 'Login' : 'Create Account'}
-          </Button>
-        </form>
-        <Button btnType="Danger" click={this.toggleLoginHander}>
-          {this.state.hasAccount
-            ? 'Create a new account'
-            : `I'm an existing user`}
-        </Button>
-      </div>
-    );
+  if (props.loading) {
+    loginInputs = <Spinner />;
   }
-}
+
+  let errorMessage = null;
+
+  if (props.error) {
+    errorMessage = <p>{props.error.message}</p>;
+  }
+
+  if (props.isAuthenticated) {
+    return props.isBuilding ? <Redirect to="/checkout" /> : <Redirect to="/" />;
+  }
+
+  return (
+    <div className={classes.Login}>
+      <form onSubmit={loginHandler}>
+        {errorMessage}
+        {loginInputs}
+        <Button btnType="Success">
+          {hasAccount ? 'Login' : 'Create Account'}
+        </Button>
+      </form>
+      <Button btnType="Danger" click={toggleLoginHander}>
+        {hasAccount ? 'Create a new account' : `I'm an existing user`}
+      </Button>
+    </div>
+  );
+};
 
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.idToken && true,

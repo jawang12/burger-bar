@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
@@ -10,26 +10,25 @@ import axios from '../../axios/orders';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { connect } from 'react-redux';
 
-class BurgerBuilder extends Component {
-  state = {
-    isOrdering: false
-  };
+const BurgerBuilder = (props) => {
+  const [isOrdering, setOrdering] = useState(false);
+  const { thunkSetIngredients } = props;
 
-  componentDidMount() {
-    this.props.thunkSetIngredients();
-  }
+  useEffect(() => {
+    thunkSetIngredients();
+  }, [thunkSetIngredients]);
 
-  updateOrderableHandler = () => {
-    if (!this.props.ingredients) return false;
+  const updateOrderableHandler = () => {
+    if (!props.ingredients) return false;
 
-    const totalPrice = Object.values(this.props.ingredients).reduce(
+    const totalPrice = Object.values(props.ingredients).reduce(
       (sum, currentVal) => sum + currentVal
     );
 
     return totalPrice > 0;
   };
 
-  goToCheckout = () => {
+  const goToCheckout = () => {
     // const priceQuery = `price=${this.state.price}`;
     // const queryParams = [priceQuery];
     // const { ingredients } = this.state;
@@ -39,74 +38,70 @@ class BurgerBuilder extends Component {
     //   );
     // }
 
-    this.props.history.push({
+    props.history.push({
       pathname: '/checkout'
       // state: { ingredients: this.state.ingredients }
       // search: '?' + queryParams.join('&')
     });
-    this.props.initOrder();
+    props.initOrder();
   };
 
-  cancelOrderHandler = () => {
-    this.setState({ isOrdering: false });
+  const cancelOrderHandler = () => {
+    setOrdering(false);
   };
 
-  isOrderingHandler = () => {
-    if (this.props.isAuthenticated) {
-      this.setState({ isOrdering: true });
+  const isOrderingHandler = () => {
+    if (props.isAuthenticated) {
+      setOrdering(true);
     } else {
-      this.props.history.push('/login');
-      this.props.initOrder();
+      props.history.push('/login');
+      props.initOrder();
     }
   };
 
-  render() {
-    const btndDisabledStatus = { ...this.props.ingredients };
-    for (let key in btndDisabledStatus) {
-      btndDisabledStatus[key] = btndDisabledStatus[key] ? false : true;
-    }
-    let orderSummary = null;
-    if (this.props.ingredients) {
-      orderSummary = (
-        <OrderSummary
-          ingredients={this.props.ingredients}
-          onClickCancel={this.cancelOrderHandler}
-          onClickSuccess={this.goToCheckout}
-          price={this.props.price}
-        />
-      );
-    }
-
-    return (
-      <>
-        <Modal
-          show={this.state.isOrdering}
-          onRemoveBackdrop={this.cancelOrderHandler}
-        >
-          {orderSummary}
-        </Modal>
-        {this.props.ingredients ? (
-          <>
-            <Burger ingredients={this.props.ingredients} />
-            <BuildControls
-              disabledStatus={btndDisabledStatus}
-              removeIngredient={this.props.removeIngredient}
-              addIngredient={this.props.addIngredient}
-              price={this.props.price}
-              isOrderable={this.updateOrderableHandler()}
-              isOrdering={this.isOrderingHandler}
-              isAuthenticated={this.props.isAuthenticated}
-            />
-          </>
-        ) : this.props.error ? (
-          <p>{this.props.error.message}</p>
-        ) : (
-          <Spinner />
-        )}
-      </>
+  const btndDisabledStatus = { ...props.ingredients };
+  for (let key in btndDisabledStatus) {
+    // check if current value is 0 (falsy), then replace that value with true to disable
+    btndDisabledStatus[key] = btndDisabledStatus[key] ? false : true;
+  }
+  let orderSummary = null;
+  if (props.ingredients) {
+    orderSummary = (
+      <OrderSummary
+        ingredients={props.ingredients}
+        onClickCancel={cancelOrderHandler}
+        onClickSuccess={goToCheckout}
+        price={props.price}
+      />
     );
   }
-}
+
+  return (
+    <>
+      <Modal show={isOrdering} onRemoveBackdrop={cancelOrderHandler}>
+        {orderSummary}
+      </Modal>
+      {props.ingredients ? (
+        <>
+          <Burger ingredients={props.ingredients} />
+          <BuildControls
+            disabledStatus={btndDisabledStatus}
+            removeIngredient={props.removeIngredient}
+            addIngredient={props.addIngredient}
+            price={props.price}
+            isOrderable={updateOrderableHandler()}
+            isOrdering={isOrderingHandler}
+            isAuthenticated={props.isAuthenticated}
+          />
+        </>
+      ) : props.error ? (
+        <p>{props.error.message}</p>
+      ) : (
+        <Spinner />
+      )}
+    </>
+  );
+};
 
 const mapStateToProps = ({ burgerBuilder, auth }) => ({
   ingredients: burgerBuilder.ingredients,
@@ -115,10 +110,10 @@ const mapStateToProps = ({ burgerBuilder, auth }) => ({
   isAuthenticated: auth.idToken && true
 });
 
-const mapDispatchToProps = dispatch => ({
-  addIngredient: ingredientName =>
+const mapDispatchToProps = (dispatch) => ({
+  addIngredient: (ingredientName) =>
     dispatch(actions.addIngredient(ingredientName)),
-  removeIngredient: ingredientName =>
+  removeIngredient: (ingredientName) =>
     dispatch(actions.removeIngredient(ingredientName)),
   thunkSetIngredients: () => dispatch(actions.thunkSetIngredients()),
   initOrder: () => dispatch(actions.initOrder())
