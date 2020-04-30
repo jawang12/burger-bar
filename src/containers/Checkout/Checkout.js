@@ -1,6 +1,6 @@
 import React from 'react';
 import ReviewOrder from '../../components/Order/ReviewOrder/ReviewOrder';
-import { Route, Redirect, withRouter } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import CustomerInfo from './CustomerInfo/CustomerInfo';
 import { connect } from 'react-redux';
 
@@ -48,4 +48,6 @@ const mapStateToProps = (state) => ({
   ordering: state.orders.ordering
 });
 
-export default withRouter(connect(mapStateToProps)(Checkout));
+// withRouter passes routing props to component if none are passed in (i.e. Route render(() =>{})
+// export default withRouter(connect(mapStateToProps)(Checkout));
+export default connect(mapStateToProps)(Checkout);
