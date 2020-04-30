@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Button from '../../../components/UI/Button/Button';
 import classes from './CustomerInfo.module.css';
 import PropTypes from 'prop-types';
@@ -10,8 +10,8 @@ import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { thunkSubmitOrder } from '../../../store/actions/orders';
 import { validator } from '../../../shared/utils';
 
-class CustomerInfo extends Component {
-  state = {
+const CustomerInfo = (props) => {
+  const [state, setFormState] = useState({
     orderForm: {
       name: {
         elementType: 'input',
@@ -100,13 +100,13 @@ class CustomerInfo extends Component {
         value: 'normal'
       }
     }
-  };
+  });
 
-  submitOrderHandler = e => {
+  const submitOrderHandler = (e) => {
     e.preventDefault();
-    const customerInfo = Object.keys(this.state.orderForm).reduce(
+    const customerInfo = Object.keys(state.orderForm).reduce(
       (obj, inputName) => {
-        obj[inputName] = this.state.orderForm[inputName].value;
+        obj[inputName] = state.orderForm[inputName].value;
         return obj;
       },
       {}
@@ -114,16 +114,16 @@ class CustomerInfo extends Component {
 
     const fullOrder = {
       customerInfo,
-      ingredients: this.props.ingredients,
-      price: this.props.price,
-      userId: this.props.userId
+      ingredients: props.ingredients,
+      price: props.price,
+      userId: props.userId
     };
 
-    this.props.thunkSubmitOrder(fullOrder, this.props.idToken);
+    props.thunkSubmitOrder(fullOrder, props.idToken);
   };
 
-  inputChangeHandler = (e, name) => {
-    const updatedOrderForm = { ...this.state.orderForm };
+  const inputChangeHandler = (e, name) => {
+    const updatedOrderForm = { ...state.orderForm };
     const updatedFormElement = { ...updatedOrderForm[name] };
 
     updatedFormElement.value = e.target.value;
@@ -133,50 +133,48 @@ class CustomerInfo extends Component {
       e.target.value
     );
     updatedOrderForm[name] = updatedFormElement;
-    this.setState({ orderForm: updatedOrderForm });
+    setFormState({ orderForm: updatedOrderForm });
   };
 
-  render() {
-    const orderInputs = Object.keys(this.state.orderForm).map(inputName => (
-      <Input
-        elementConfig={this.state.orderForm[inputName].elementConfig}
-        elementType={this.state.orderForm[inputName].elementType}
-        value={this.state.orderForm[inputName].value}
-        onInputChange={e => this.inputChangeHandler(e, inputName)}
-        touched={this.state.orderForm[inputName].touched}
-        invalid={!this.state.orderForm[inputName].valid}
-        key={inputName}
-      />
-    ));
+  const orderInputs = Object.keys(state.orderForm).map((inputName) => (
+    <Input
+      elementConfig={state.orderForm[inputName].elementConfig}
+      elementType={state.orderForm[inputName].elementType}
+      value={state.orderForm[inputName].value}
+      onInputChange={(e) => inputChangeHandler(e, inputName)}
+      touched={state.orderForm[inputName].touched}
+      invalid={!state.orderForm[inputName].valid}
+      key={inputName}
+    />
+  ));
 
-    const disableButton = Object.values(this.state.orderForm).every(
-      inputName => inputName.valid === true
-    );
+  const disableButton = Object.values(state.orderForm).every(
+    (inputName) => inputName.valid === true
+  );
 
-    return (
-      <div className={classes.CustomerInfo}>
-        <h3>Please enter your contact information</h3>
-        {this.props.loading ? (
-          <Spinner />
-        ) : (
-          <form onSubmit={this.submitOrderHandler}>
-            {orderInputs}
-            <Button disabled={!disableButton} btnType="Success">
-              Submit
-            </Button>
-          </form>
-        )}
-      </div>
-    );
-  }
-}
+  return (
+    <div className={classes.CustomerInfo}>
+      <h3>Please enter your contact information</h3>
+      {props.loading ? (
+        <Spinner />
+      ) : (
+        <form onSubmit={submitOrderHandler}>
+          {orderInputs}
+          <Button disabled={!disableButton} btnType="Success">
+            Submit
+          </Button>
+        </form>
+      )}
+    </div>
+  );
+};
 
 CustomerInfo.propTypes = {
   price: PropTypes.number.isRequired,
   ingredients: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { ingredients, price } = state.burgerBuilder;
   const { loading } = state.orders;
   const { idToken, userId } = state.auth;
@@ -189,7 +187,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   thunkSubmitOrder: (order, idToken) =>
     dispatch(thunkSubmitOrder(order, idToken))
 });
