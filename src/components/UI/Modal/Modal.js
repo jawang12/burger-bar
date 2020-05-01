@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './Modal.module.css';
 import Backdrop from '../Backdrop/Backdrop';
 
-const Modal = props => {
+const Modal = (props) => {
   console.log('update');
   return (
     <>
@@ -28,6 +28,14 @@ const propsAreEqual = (prevProps, nextProps) => {
       prevProps.children === nextProps.children &&
       prevProps.show === nextProps.show
     );
+    /*
+      return true if passing nextProps to render would return
+      the same result as passing prevProps to render,
+      otherwise return false
+
+      here we are basically checking when not to re-render
+      if return true, then do not re-render
+    */
   }
 };
 
