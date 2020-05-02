@@ -36,7 +36,11 @@ const Orders = () => {
       ))}
     </div>
   );
-  return allOrders;
+  return ordersState.length ? (
+    allOrders
+  ) : (
+    <h2 style={{ textAlign: 'center' }}>You currently have no recent orders</h2>
+  );
 };
 
 /*
