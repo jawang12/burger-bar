@@ -1,38 +1,33 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import Order from '../../components/Order/Order';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axios from '../../axios/orders';
 import { thunkFetchOrders } from '../../store/actions';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
-const Orders = ({
-  thunkFetchOrders,
-  idToken,
-  userId,
-  loading,
-  orders,
-  error
-}) => {
+const Orders = () => {
+  const dispatch = useDispatch();
+  const ordersState = useSelector(({ orders }) => orders);
+  const authState = useSelector(({ auth }) => auth);
+
+  const fetchOrders = useCallback(
+    () => dispatch(thunkFetchOrders(authState.idToken, authState.userId)),
+    [dispatch, authState.idToken, authState.userId]
+  );
+
   useEffect(() => {
-    console.log('mounted');
-    thunkFetchOrders(idToken, userId);
-    return () => {
-      console.log('unmounted');
-    };
-  }, [thunkFetchOrders, idToken, userId]);
+    fetchOrders();
+  }, [fetchOrders]);
 
-  console.log('hi');
-
-  if (error) {
-    console.log('errrrrror');
+  if (ordersState.error) {
     return <h1>There was an error</h1>;
   }
-  const allOrders = loading ? (
+  const allOrders = ordersState.loading ? (
     <Spinner />
   ) : (
     <div>
-      {orders.map((order) => (
+      {ordersState.orders.map((order) => (
         <Order
           key={order.id}
           ingredients={order.ingredients}
@@ -44,6 +39,7 @@ const Orders = ({
   return allOrders;
 };
 
+/*
 const mapStateToProps = ({ orders, auth }) => ({
   orders: orders.orders,
   loading: orders.loading,
@@ -52,12 +48,10 @@ const mapStateToProps = ({ orders, auth }) => ({
   userId: auth.userId
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  thunkFetchOrders: (idToken, userId) =>
-    dispatch(thunkFetchOrders(idToken, userId))
-});
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withErrorHandler(Orders, axios));
+const mapDispatchToProps = (dispatch) => ({
+  thunkFetchOrders: () => dispatch(thunkFetchOrders(idToken, userId))
+});
+*/
+
+export default withErrorHandler(Orders, axios);

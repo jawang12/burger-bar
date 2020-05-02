@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 const useInterceptor = (axios) => {
   const [error, setError] = useState(null);
 
+  // called before render phase similar to componentWillMount
   const request = axios.interceptors.request.use(
     (req) => {
       setError(null);
